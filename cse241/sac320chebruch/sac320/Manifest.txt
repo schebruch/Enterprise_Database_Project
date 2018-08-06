@@ -1,0 +1,2 @@
+Main-class: Company
+Class-Path: ojdbc7.jar

@@ -1,0 +1,233 @@
+
+create table Location
+(
+	Loc_id varchar(8),
+	street_no numeric(10),
+	street_name varchar(20) not null,
+	city varchar(20) not null,
+	state varchar(20) not null,
+	check(street_no >= 0),
+	primary key(Loc_id)
+);
+
+create table customer
+(
+	cust_id varchar(8),
+	first varchar(20) not null,
+	last varchar(20) not null,
+	primary key(cust_id)
+);
+
+create table freq_shopper
+(
+	cust_id varchar(8),
+	gender char(1) not null,
+	e_mail varchar(50) not null,
+	phone_num varchar(12) not null,
+	primary key(cust_id),
+	foreign key(cust_id) references customer on delete cascade
+);
+
+create table lives_at
+(
+	cust_id varchar(8),
+	Loc_id varchar(8),
+	primary key(cust_id),
+	foreign key(cust_id) references customer on delete cascade,
+	foreign key(Loc_id) references Location on delete cascade
+);
+
+create table payment
+(
+	pmt_id varchar(8),
+	pmt_type varchar(10), /*card, cash, check, bitcoin...*/
+	date_made varchar(10) not null,
+	primary key(pmt_id)
+);
+
+create table pays_with
+(
+    	pmt_id varchar(8),
+	cust_id varchar(8),
+	primary key(pmt_id),
+	foreign key(pmt_id) references payment on delete cascade,
+	foreign key(cust_id) references customer
+);
+create table cust_order
+(
+	order_num numeric(8),
+	type varchar(10) not null,
+	date_placed date,
+	primary key(order_num)
+);
+
+create table pmt_for
+(
+	order_num numeric(8),
+	pmt_id varchar(8),
+	primary key(order_num),
+	foreign key(order_num) references cust_order on delete cascade,
+	foreign key(pmt_id) references payment on delete cascade
+);
+
+/*Make sure locations can't be deleted*/
+create table store
+(
+	Loc_id varchar(8),
+	open_date date not null,
+	primary key(Loc_id),
+	foreign key(Loc_id) references Location on delete cascade
+);
+
+create table warehouse
+(
+	Loc_id varchar(8),
+	primary key(Loc_id),
+	foreign key(Loc_id) references Location
+);
+
+create table cust_order_from
+(
+	order_num numeric(8),
+	Loc_id varchar(8),
+	primary key(order_num),
+	foreign key(order_num) references cust_order on delete cascade,
+	foreign key(Loc_id) references Location
+);
+
+
+create table categ
+(
+	cat_id numeric(8),
+	cat_name varchar(15) not null,
+	primary key(cat_id)
+);
+
+/*NEXT TIME CREATED, CHANGE NAME TO SUB_CATEG_NAME"*/
+create table sub_categ
+(
+	sub_cat_id numeric(8),
+	cat_id numeric(8),
+	name varchar(15),
+	primary key(sub_cat_id, cat_id),
+	foreign key(cat_id) references categ on delete cascade
+);	
+
+/*NOTE,NAME NOW CHANGED TO PRODUCT_NAME*/
+create table product
+(
+	prod_id numeric(8),
+	cat_id numeric(8),
+	product_name varchar(20),
+	price numeric(10,2),
+	prod_size varchar(5) not null,
+	brand varchar(20) not null,
+	primary key(prod_id, cat_id),
+	foreign key(cat_id) references categ on delete cascade
+);
+
+create table cust_buys
+(
+	order_num numeric(8),
+	prod_id numeric(8),
+  	cat_id numeric(8),
+	price numeric(10,2), check( price >= 0),
+	qtypa numeric(8), check (qty >= 0),
+	primary key(order_num, prod_id, cat_id),
+	foreign key(order_num) references cust_order on delete cascade,
+	foreign key(prod_id, cat_id) references product on delete cascade
+);
+
+create table stored_in
+(
+	Loc_id varchar(8),
+	prod_id numeric(8),
+    	cat_id numeric(8),
+	qty numeric(8), check(qty >= 0),
+	price numeric( 10,2), check(price >= 0),
+	primary key(Loc_id, prod_id, cat_id),
+	foreign key(Loc_id) references Location on delete set null, /*will have to come up with a trigger to move to a store with open spots*/
+	foreign key(prod_id, cat_id) references product on delete cascade
+);
+
+create table vendor
+(
+	name varchar(20) not null,
+	primary key(name)
+);
+
+
+create table store_order
+(
+	order_num numeric(8),
+	purpose varchar(10) not null,
+	primary key(order_num)
+);
+
+create table store_orders
+(
+	order_num numeric(8),
+	Loc_id varchar(8),
+	date_ordered varchar(10) not null,
+	primary key(order_num),
+	foreign key(order_num) references store_order on delete cascade,
+	foreign key(Loc_id) references Location
+);
+
+create table store_order_from
+(
+	order_num numeric(8),
+	name varchar(20) not null,
+	primary key(order_num),
+	foreign key(order_num) references store_order on delete cascade,
+	foreign key(name) references vendor
+);
+
+create table store_buys
+(
+	prod_id numeric(8),
+   	cat_id numeric(8),
+	order_num numeric(8),
+	qty numeric(8),
+	price numeric (10,2),
+   	buy_date varchar(10) not null,
+   	check (qty >= 0), check(price >= 0),
+	primary key(order_num, prod_id, cat_id),
+	foreign key(prod_id, cat_id) references product,
+	foreign key(order_num) references store_order on delete cascade
+);
+
+
+
+create table ships_from
+(
+	order_num numeric(8),
+	Loc_id varchar(8),
+	date_shipped varchar(10) not null,
+	primary key(order_num),
+	foreign key(order_num) references cust_order on delete cascade,
+	foreign key(Loc_id) references warehouse
+);
+
+create table ships_to
+(
+	order_num numeric(8),
+	Loc_id varchar(8),
+	date_delivered varchar(10) not null,
+	primary key(order_num),
+	foreign key(order_num) references cust_order on delete cascade,
+	foreign key(Loc_id) references Location on delete cascade
+);
+
+
+create table offers
+(
+	prod_id numeric(8),
+	cat_id numeric(8),
+	name varchar(20) not null, 
+	price numeric(10,2),
+	check (price >= 0),
+	primary key(prod_id, cat_id, name),
+	foreign key(prod_id, cat_id) references product on delete cascade,
+	foreign key(name) references vendor on delete cascade
+);

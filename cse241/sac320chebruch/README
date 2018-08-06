@@ -1,0 +1,158 @@
+Sam Chebruch
+CSE 241 
+BRC README
+
+
+Compilation and Execution:
+	All .java files can be compiled in the Makefile. Simply type
+	'make' into the terminal and it will compile all java files.
+
+Code Statement:
+	I used the Java API as a reference for completing this project.
+	I also used regular expressions to test for valid input in some cases.
+	I used: https://regexr.com/ as a regular expression reference guide
+	and also used it to test various sample inputs to see whether they would
+	pass the regular expression.
+
+Valid Input Statement:
+	In some cases, I prompt the user to 'enter valid input' if they enter something invalid.
+	I assume that the user's invalid input is obvious to the user (such as if they put a ; character
+	in their name, for example). The program would not except invalid input, and I assume
+	the user understands if their input is invalid.  I give instructions on what valid input
+	is before every user prompt, but I re-prompt the user to simply 'enter valid input', and don't
+	always make it absolutely explicit as to why the input was invalid.
+
+Data Generation:
+	All data were generated either manually (in the makeData directory) or 
+	through Mockaroo.com, a random data generator.
+	Note that the data generated code is provided but
+	is not intended to be for testing.  The code is merely
+	for the purpose of quick data insertion and thus does not
+	handle exceptions gracefully.
+
+
+Instructions for Using the Interface:
+	When the executable is run, there will be 3 options: Customer, Clerk, Manager.  
+	These options represent the 3 interfaces.  Select one of them, and you will be 
+	prompted to enter oracle account information.  Username is sac320, just in case
+	you need that information.  Follow the instructions provided by the interface to 
+	use it.  You can only use 1 interface at a time, so if you would like to switch
+	from the customer to the clerk interface (for example), you would have to select the 'quit' option
+	in the customer interface and re-launch the program.
+
+
+A note about primary key generation:
+	I generated primary keys by adding 1 to the maximum value in the table.  
+	For example, if the maximum customer ID in the customer relation was 100,
+	then the customer ID of the new customer would be 101. There is no significance
+	to the value of each unique identifier.
+
+
+Interface Contents:
+	Customer Interface:
+		The customer interface simulates a customer using online services.
+		The customer, with this interface, can make an account, become a 
+		frequent shopper, or make an online order.  If the customer chooses to 
+		make an account, he/she will be prompted to enter the name and address. 
+		Frequent shoppers will be prompted to enter gender, email, and phone number.
+		IDs are assigned and customer information is updated into the database.
+		
+		For online orders, the customer must enter his/her ID, or will be prompted
+		to become a customer (to be uploaded into the database).
+		Note that I assume that the customers remember their ID and do not 
+		log in with a user name and password.  Customers can add multiple products to 
+		an order, and will be given a list of products to choose from.  The total price is given
+		at the end of the order, and the customer must select a payment method for the online
+		transaction (credit card or bitcoin).  If a customer orders more than the store has of a 
+		particular product, then the store will automatically order more of that product to give to the
+		customer. I assume that the store's order arrives instantaneously in order to avoid over-complicating
+		the process, and I also assume that all vendors have unlimited quantity of products.  
+		Finally, the customers will then be asked if they would prefer the order be delivered to their 
+		homes or to be picked up at a Regork location.  If the customer chooses to pickup at a Regork location, he/she
+		will be given a list of Regork locations along with their addresses to select from. I also make the assumption that 
+		all orders are delivered exactly three days after the order date so as to keep things uniform.  Finally, while I realize
+		that it would be optimal in a real business setting to give customers the option to cancel their orders mid-order,
+		I avoided adding such complexities due to time constraints.
+
+		Note that all orders begin with asking the customer if he/she would like to become a frequent shopper.
+
+	Clerk Interface:
+		I assume that the only functionality the clerk provides to the store is to check 
+		a customer out.  Thus, this interface is very similar to the customer ordering
+		online, except it would be from the point of view of the clerk checking the products
+		out of the store. Note that this is for all in-store purchases (while the customer interface is for online purchases).
+		The clerk is prompted to enter the store ID that he/she works in
+		(which I assume the clerk knows, but I also provide the address of each store just in case).
+		The clerk will then enter the customer ID (which, in real life, would be retrieved from a lookup given first last name,
+		phone number, etc... but I assume that the customer simply tells the clerk the ID since I assume very customer memorizes their ID).  
+		The order is handled similar to how the customer ordering online in the customer interface is handled.  
+
+	Manager Interface:
+		The manager is a manager of a specific store, so he/she will be prompted to enter the store_id for which
+		he/she is a manager for.  The manager can then order inventory for goods that are of low quantity in a specific 
+		store.  This is done by asking the manager what the minimum quantity of a product is given its category 
+		and the store ordering whatever quantity is needed to satisfy the minimum for each product.  I assume that all products in a category
+		have the same minimum quantity, since all products in a category are similar in nature. Using this feature would invoke a "general" order, meaning the 
+		store just ordered for restock, rather than a "c_req" (customer requested order), which is triggered by a customer ordering more from
+		a store than the current quantity of a good that the store has.
+
+		Also, the manager can change the price of a good by following the instructions given.
+
+
+Overall ER and Design Comments:
+
+	Philosophy on price storage:
+		There are many different prices, including the price a customer pays for a 
+		product, the price a store pays for a product, the price a 
+		vendor offers for a product,  and the price that a product 
+		is selling for right now at a particular store, which can be different depending on the store that sells
+		that product.  Thus, price is stored in 4 locations in the ER diagram: in cust_buys (which is the price the
+		customer pays for a product a particular time), store_buys (the price the store pays for a product at a particular
+		time), in stored_in (the price the product is selling for right now at a particular store), and in offers 
+		(the price a vendor is offering for a product).
+
+	Frequent Shoppers:
+		A customer by default is assigned an ID, and must provide first and last
+		name to be registered.  Anyone who decides to provide additional information
+		such as gender, email, and phone number is considered a "frequent shopper"
+		and, in a real business environment, would receive special discount offers
+		via email or phone call. This project gives all frequent shoppers 10% off every order.
+		The provided email and phone number would help a real business advertise to customers and should make the business more
+		profitable due to increased advertising.
+
+	Bitcoin Payment Method:
+		I initially misread the instructions that bitcoin is an invalid payment method for BRC currently.
+		I unfortunately saw this too late, and thus treated it as a valid payment method for both online and
+		in-store transactions.
+
+	Keeping track of payments:
+		A particular payment belongs to one and only one customer.  Payment
+		types for customers are all stored in the data base, which can range
+		from cash, check, credit card, and even bitcoin. I assume that the clerk retrieves every customer's ID at checkout through asking the customer, since I assume that every 
+		customer memorizes their ID.  If no such customer exists, the customer is assigned an ID and added to the database.  
+		I assume all customers are willing to provide first and last name, along with addresses.  Note that all customer
+		payments are for orders, so I assume that the payment is done on the same day an order 
+		is placed.  
+
+	Locations:
+		The Location entity set is any address; a warehouse and a store can be specialized to 
+		a location as a result.  For the pre-populated database, I let location IDs 1-100 represent 
+		addresses of customers, 101 - 150 represent locations of various stores, and location 151 represent
+		the warehouse. Note that I continue to populate Location IDs after 151 for customers who use the interface,
+		so any Location ID greater than 151 is also for a customer.
+		I assume all customers are willing to provide their address.   
+		The warehouse is used exclusively for online orders, and I assume that this warehouse is 
+		large enough such that only one must exist. 
+
+	Products and Categories:
+		I made product a weak entity set with category, since a product ID can be repeated for different
+		category IDs.  For example, product id of 1 for the food category may be "chips" but product id
+		of 1 for the appliances category could be "washing machine".  Also, in order to make data generation easier, 
+		I randomized the prices for sizes of products.  This means that unrealistic prices may be present, such as a 
+		"small" water bottle costing more than a "large" by the same brand.
+
+	Shipping:
+		Ships_to and ships_from model what location a product travels from and goes to.  In the data generation phase,
+		I made ships_from be on earlier dates than ships_to, and I made all ships_to dates the same date that I populated that
+		table (4/29/18).  This made data generation easier, but for my interface, I will assume that all orders are shipped to 
+		the desired location 3 days after the order is placed (the date for ships_from will be the actual date the interface is tested).
