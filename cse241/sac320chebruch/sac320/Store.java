@@ -208,23 +208,23 @@ public class Store
 
     public int assignID(Connection con, Statement s, String tableName)
     {
-		String q = null;
+	String q = null;
         try
         {
 			if(tableName.equalsIgnoreCase("Location"))
 			{
-				 q = "select MAX(to_number(Loc_id)) from "+tableName;
+				 q = "select MAX(Loc_id) from "+tableName;
 			}else{
-				q = "select MAX(to_number(order_num)) from " + tableName;
+				q = "select MAX(order_num) from " + tableName;
 			}
             ResultSet result = s.executeQuery(q);
             result.next();
 			int r = 0;
 			if(tableName.equalsIgnoreCase("Location"))
 			{
-				r = result.getInt("MAX(to_number(Loc_id))");
+				r = result.getInt("MAX(Loc_id)");
 			}else{
-				r = result.getInt("MAX(to_number(order_num))");
+				r = result.getInt("MAX(order_num)");
 			}
            	result.close();
 			if(tableName.equalsIgnoreCase("cust_order"))

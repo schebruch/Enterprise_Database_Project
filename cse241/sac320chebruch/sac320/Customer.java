@@ -79,17 +79,21 @@ public class Customer
 
 	public void insertNewCust(int LocId, Connection con, Statement s)
 	{
-			try
+		try
         	{
            		String LocIns = "insert into Location values(" + LocId + ", '" + getAddress()[0] + "', '" + getAddress()[1] + "', '" + getAddress()[2] + "', '" + getAddress()[3] + "')";
-				int k = s.executeUpdate(LocIns);
+			System.out.println(LocIns);
+
+			int k = s.executeUpdate(LocIns);
            		String custIns = "insert into Customer values('" + getCustID() + "', '"+ getFirst() + "', '"+ getLast() +  "')";
-				int j = s.executeUpdate(custIns);
-            	String livesIns = "insert into lives_at values('" +getCustID() + "', " + LocId + ")";
-				int i = s.executeUpdate(livesIns);
+			System.out.println(custIns);
+			int j = s.executeUpdate(custIns);
+        	    	String livesIns = "insert into lives_at values('" +getCustID() + "', " + LocId + ")";
+			System.out.println(livesIns);
+			int i = s.executeUpdate(livesIns);
         	}catch(Exception e)
         	{
-				System.out.println("Database update failed.  Please try again");
+			System.out.println("Database update failed.  Please try again");
         	}
 	}
 
@@ -209,10 +213,11 @@ public class Customer
     {
         try
         {
-            String q = "select MAX(to_number(cust_id)) from "+tableName;
+            String q = "select MAX(cust_id) from "+tableName;
             ResultSet result = s.executeQuery(q);
+	    System.out.println(q);
             result.next();
-            int r = result.getInt("MAX(to_number(cust_id))");
+            int r = result.getInt("MAX(cust_id)");
             result.close();
             return r+1;
         }catch(Exception e)

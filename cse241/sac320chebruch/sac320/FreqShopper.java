@@ -80,7 +80,7 @@ public class FreqShopper extends Customer
 	}
 	public String toString()
 	{
-		return "insert into freq_shopper values('" + getCustID() + "', '" +  getGender() + "', '" + getEmail() + "', '" + getPhone() +"')";
+		return "insert into freq_shopper values('" + getCustID() + "', '" +  getGender() + "', '" + getEmail() + "', [" + getPhone() + "])";
 	}
 
 	public static void updateFreqShopper(Connection con, Statement s, int cust_id)

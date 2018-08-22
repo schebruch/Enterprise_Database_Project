@@ -35,10 +35,10 @@ public class Payment
     {
         try
         {
-            String q = "select MAX(to_number(pmt_id)) from "+tableName;
+            String q = "select MAX(pmt_id)) from "+tableName;
             ResultSet result = s.executeQuery(q);
             result.next();
-            int r = result.getInt("MAX(to_number(pmt_id))");
+            int r = result.getInt("MAX(pmt_id))");
             result.close();
             return (pmt_id = r + 1);
         }catch(Exception e)

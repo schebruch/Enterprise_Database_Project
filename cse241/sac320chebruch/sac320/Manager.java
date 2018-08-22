@@ -287,10 +287,10 @@ public class Manager
      {
         try
         {
-            String q = "select MAX(to_number(order_num)) from "+tableName;
+            String q = "select MAX(order_num) from "+tableName;
             ResultSet result = s.executeQuery(q);
             result.next();
-            int r = result.getInt("MAX(to_number(order_num))");
+            int r = result.getInt("MAX(order_num))");
             result.close();
             return r+1;
         }catch(Exception e)

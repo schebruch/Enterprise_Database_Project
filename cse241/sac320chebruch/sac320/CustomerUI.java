@@ -26,6 +26,7 @@ public class CustomerUI
 			Class.forName("org.sqlite.JDBC");
 			con=DriverManager.getConnection("jdbc:sqlite:BRC.db");
 			s = con.createStatement();
+			System.out.println("Connection successful");
 		}catch(Exception e)
 		{
 		}
@@ -209,11 +210,13 @@ public class CustomerUI
 				tmp2.setFirst(r.getString("first"));
 				tmp2.setLast(r.getString("last"));
 				FreqShopper c = updateFreqShopper2(tmp2, con, s);
+				System.out.println(c.toString());
 				int j = s.executeUpdate(c.toString());
 				System.out.println("update successful");
 			}
 		}catch(java.sql.SQLException e)
 		{
+			e.printStackTrace();
 			System.out.println("Something went wrong. Please restart the program");
 			System.exit(0);
 		}
@@ -323,11 +326,14 @@ public class CustomerUI
 	{
 		try
 		{
-			String q = "select MAX(to_number(" + pk + ")) from "+tableName;
+			String q = "select MAX(" + pk + ") from "+tableName;
+			System.out.println(q);
 			ResultSet result = s.executeQuery(q);
+			System.out.println("Result retrieved");
 			result.next();
-			int r = result.getInt("MAX(to_number(" + pk +"))");
+			int r = result.getInt("MAX(" + pk +")");
 			result.close();
+			System.out.println("Customer ID: " + (r+1));
 			return r+1;
 		}catch(Exception e)
 		{
